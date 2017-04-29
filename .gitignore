@@ -1,0 +1,4 @@
+*.pyc
+astrohack/
+validationdata.csv
+validationdata_SDSSID.csv
