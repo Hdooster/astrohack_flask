@@ -83,7 +83,7 @@ def upload_file():
             # upload_leaderboard((teamname, chi2_score))
 
             return redirect(url_for('upload_file',
-                                    filename=filename
+                                    filename=filename,
                                     chi2_score=chi2_score,
                                     prev_chi2_score=prev_chi2_score
                                     ))
