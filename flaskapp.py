@@ -73,20 +73,43 @@ def upload_file():
             file.save(filepath)
 
             chi2_score = calculate_full_score(filepath)
+            leaderboard = read_leaderboard()
+            if teamname in leaderboard:
+                prev_chi2_score = leaderboard[teamname]
+            else:
+                prev_chi2_score = 'None'
+
             upload_leaderboard((teamname, chi2_score))
 
             return redirect(url_for('upload_file',
-                                    filename=filename))
+                                    filename=filename,
+                                    chi2_score=chi2_score,
+                                    prev_chi2_score=prev_chi2_score
+                                    ))
     else:
         leaderboard = read_leaderboard()
-        sorted_leaderboard = sorted(leaderboard.items(), key=operator.itemgetter(1), reverse=False)
-        leaderboard_string = """<table>
+        # show last submitted score
+
+        leaderboard_string = ''
+        if request.args.get('chi2_score'):
+            chi2_score = request.args.get('chi2_score')
+            prev_chi2_score = request.args.get('prev_chi2_score')
+            leaderboard_string = 'Your submission scored ' + str(chi2_score) + ' which is '
+            if chi2_score < prev_chi2_score:
+                leaderboard_string += 'better! '
+            else:
+                leaderboard_string += 'worse.. '
+            leaderboard_string += ' than your topscore of ' + str(prev_chi2_score) + ' <br>'
+
+
+        leaderboard_string += """<table>
                               <tr>
                                 <th>Team</th>
                                 <th>Score</th>
                               </tr>
                               <tr>"""
 
+        sorted_leaderboard = sorted(leaderboard.items(), key=operator.itemgetter(1), reverse=False)
         for (k, v) in sorted_leaderboard:
             # print k, v
             leaderboard_string += '<tr><td>' + str(k) + '</td><td>' + str(v) + '</td></tr>'
